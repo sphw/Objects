@@ -1,0 +1,21 @@
+[submodule "Carthage/Checkouts/Alamofire"]
+	path = Carthage/Checkouts/Alamofire
+	url = https://github.com/Alamofire/Alamofire.git
+[submodule "Carthage/Checkouts/Diff.swift"]
+	path = Carthage/Checkouts/Diff.swift
+	url = https://github.com/wokalski/Diff.swift.git
+[submodule "Carthage/Checkouts/Locksmith"]
+	path = Carthage/Checkouts/Locksmith
+	url = https://github.com/matthewpalmer/Locksmith.git
+[submodule "Carthage/Checkouts/ReactiveKit"]
+	path = Carthage/Checkouts/ReactiveKit
+	url = https://github.com/ReactiveKit/ReactiveKit.git
+[submodule "Carthage/Checkouts/Bond"]
+	path = Carthage/Checkouts/Bond
+	url = https://github.com/ReactiveKit/Bond.git
+[submodule "Carthage/Checkouts/ReactiveAlamofire"]
+	path = Carthage/Checkouts/ReactiveAlamofire
+	url = https://github.com/ReactiveKit/ReactiveAlamofire.git
+[submodule "Carthage/Checkouts/couchbase-lite-ios"]
+	path = Carthage/Checkouts/couchbase-lite-ios
+	url = https://github.com/couchbase/couchbase-lite-ios.git

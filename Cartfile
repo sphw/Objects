@@ -1,0 +1,5 @@
+github "ReactiveKit/Bond" ~> 6.0
+github "ReactiveKit/ReactiveAlamofire" ~> 2.0
+github "Alamofire/Alamofire" ~> 4.3
+github "matthewpalmer/Locksmith"
+github "couchbase/couchbase-lite-ios" "version/2.0DB1"
