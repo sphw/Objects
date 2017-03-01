@@ -15,18 +15,17 @@ import ReactiveAlamofire
 import Locksmith
 import CouchbaseLite
 public class DataManager {
-    static var shared: DataManager = DataManager()
-    var Classes: ClassesType!
-    var currentUser: (() -> (UserType?))!
-    var database: CBLDatabase!
-    var apiURL: String!
+    public static var shared: DataManager = DataManager()
+    public var Classes: ClassesType!
+    public var currentUser: (() -> (UserType?))!
+    public var database: CBLDatabase!
+    public var apiURL: String!
     init(){
     }
-    let dataURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!.appendingPathComponent("data")
-    var objectStore: [String: [String: Object]] = [String: [String: Object]]()
-    func remove<T: Object>(_ type: T.Type, at index: Int) {
+    public var objectStore: [String: [String: Object]] = [String: [String: Object]]()
+    public func remove<T: Object>(_ type: T.Type, at index: Int) {
     }
-    func add<T: Object>(_ object: T) {
+    public func add<T: Object>(_ object: T) {
         if objectStore[String(describing: type(of: object))] == nil {
             objectStore[String(describing: type(of: object))]  = [String: Object]()
         }

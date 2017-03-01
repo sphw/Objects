@@ -12,14 +12,14 @@ import ReactiveKit
 import ReactiveAlamofire
 import Bond
 import CouchbaseLite
-public class Object: Serializable {
-    var id: Observable<String> = Observable("")
-    var document: CBLDocument?
-    var syncState: Observable<SyncState> = Observable(.Syncing)
-    enum SyncState: Int {
+open class Object: Serializable {
+    public var id: Observable<String> = Observable("")
+    public var document: CBLDocument?
+    public var syncState: Observable<SyncState> = Observable(.Syncing)
+    public enum SyncState: Int {
         case NotSynced = 0, Syncing, Synced
     }
-    init(){
+    public init(){
         self.id.value = String.random(length: 15)
         let _ = syncState.observeNext {
             if $0 == .Synced {
@@ -27,7 +27,7 @@ public class Object: Serializable {
             }
         }
     }
-    func load(dictionary: [String : Any]) -> Bool {
+    open func load(dictionary: [String : Any]) -> Bool {
         guard let id = dictionary["id"] as? String else { return false }
         self.id.value = id
         return true
@@ -40,14 +40,14 @@ public class Object: Serializable {
             DataManager.shared.add(self)
         }
     }
-    var dictionary: [String : Any] {
+    open var dictionary: [String : Any] {
         return [
             "id": id.value,
             "syncState": syncState.value.rawValue 
         ]
     }
 
-    func push() -> SafeSignal<Bool> {
+    public func push() -> SafeSignal<Bool> {
         return Signal<Bool, NoError> { signal in
             let _ = Alamofire.request(DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())",
                 method: .post, parameters: self.dictionary,
@@ -73,7 +73,7 @@ public class Object: Serializable {
         }
     }
 
-    func pull() -> SafeSignal<Bool> {
+    public func pull() -> SafeSignal<Bool> {
         let u = DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())/\(self.id.value)"
         return Alamofire.request(u, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).validate(statusCode: 200..<300).toDataSignal().map { (data: Data) -> (Bool?) in
             guard let d = (try? unpack(data))?.value as? [String: Any] else { return nil }
@@ -85,15 +85,15 @@ public class Object: Serializable {
             return b
         }.ignoreNil().suppressError(logging: true)
     }
-    func delete() {
+    public func delete() {
         let u = DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())/\(id.value)"
         let _  = Alamofire.request(u, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).validate(statusCode: 200..<300)
     }
-    func save(depth: Int = 1) {
+    open func save(depth: Int = 1) {
         document?.properties = self.dictionary as [AnyHashable: Any]
         try? document?.save()
     }
-    func upload(filedName: String, data: Data, mimeType: String) -> SafeSignal<Bool> {
+    public func upload(filedName: String, data: Data, mimeType: String) -> SafeSignal<Bool> {
         let u = DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())/\(self.id.value)/upload/"
         return SafeSignal<Bool> { signal in
             let _ = Alamofire.upload(multipartFormData: { m in
@@ -116,7 +116,7 @@ public class Object: Serializable {
             return NonDisposable.instance
         }
     }
-    func file(name: String, url: String?) -> Observable<Data?> {
+    public func file(name: String, url: String?) -> Observable<Data?> {
         let key = "\(name)_coblob_"
         let obs = Observable((self.document?[key] as? CBLBlob)?.content)
         if let url = url,
@@ -130,10 +130,10 @@ public class Object: Serializable {
         }
         return obs
     }
-    func calculateRelationships(depth: Int = 0 ) {
+    open func calculateRelationships(depth: Int = 0 ) {
         
     }
-    func auxPush() -> Signal<Bool, NoError> {
+    open func auxPush() -> Signal<Bool, NoError> {
         return Signal<Bool, NoError> {
             $0.completed(with: true)
             return NonDisposable.instance
@@ -142,7 +142,7 @@ public class Object: Serializable {
 }
 //MARK: Static Function
 extension Object {
-    static func get<T: Object>(id: String?, load: Bool = true) -> Observable<T?> {
+    public static func get<T: Object>(id: String?, load: Bool = true) -> Observable<T?> {
         if let id = id {
             let obj = DataManager.shared.objectStore[String(describing: self)]?[id] as? T
             let observable = Observable<T?>((obj ?? self.init(dictionary: DataManager.shared.database.existingDocument(id: id)?.properties as? [String: Any], add: true) as? T))
@@ -162,7 +162,7 @@ extension Object {
             return Observable(nil)
         }
     }
-    static func load(auxData d: [String: Any]) {
+    public static func load(auxData d: [String: Any]) {
         d.forEach { k,v in
             if let c = DataManager.shared.Classes.from(plural: k),
                 let a = v as? [[String: Any]]{
@@ -173,7 +173,7 @@ extension Object {
             }
         }
     }
-    static func search<T: Object>(string: String, page: Int) -> Observable<[T]?> {
+    public static func search<T: Object>(string: String, page: Int) -> Observable<[T]?> {
         let obs: Observable<[T]?> = Observable(nil)
         let u = DataManager.shared.apiURL +  "\(String(describing: self))/search/\(string)"
         let _  = Alamofire.request(u, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).validate(statusCode: 200..<300).toDataSignal().observeNext {
@@ -184,8 +184,8 @@ extension Object {
         return obs
     }
 }
-struct MessagePackEncoding: ParameterEncoding {
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+public struct MessagePackEncoding: ParameterEncoding {
+    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
         guard let dict = parameters else { return urlRequest }
         let data = pack(dict)
@@ -196,7 +196,7 @@ struct MessagePackEncoding: ParameterEncoding {
         return urlRequest
     }
 }
-extension CBLDatabase {
+public extension CBLDatabase {
     func existingDocument(id: String) -> CBLDocument?{
         return self.documentExists(id) ? self[id] : nil
     }
