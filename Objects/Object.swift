@@ -89,6 +89,11 @@ open class Object: Serializable {
         let u = DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())/\(id.value)"
         let _  = Alamofire.request(u, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).validate(statusCode: 200..<300)
     }
+    public func remove() {
+        let _ = DataManager.shared.objectStore[String(describing: type(of: self))]?.removeValue(forKey: self.id.value)
+        try? self.document?.delete()
+        
+    }
     open func save(depth: Int = 1) {
         document?.properties = self.dictionary as [AnyHashable: Any]
         try? document?.save()
