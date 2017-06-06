@@ -1,4 +1,4 @@
-github "ReactiveKit/Bond" ~> 6.0
+github "sphw/Bond" "master"
 github "ReactiveKit/ReactiveAlamofire" ~> 2.0
 github "Alamofire/Alamofire" ~> 4.3
 github "matthewpalmer/Locksmith"
