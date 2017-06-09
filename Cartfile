@@ -1,4 +1,4 @@
-github "sphw/Bond" "master"
+github "ReactiveKit/Bond" "swift-4"
 github "ReactiveKit/ReactiveAlamofire" ~> 2.0
 github "Alamofire/Alamofire" ~> 4.3
 github "matthewpalmer/Locksmith"
