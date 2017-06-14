@@ -54,17 +54,13 @@ open class Object: Serializable {
                 encoding: MessagePackEncoding(), headers: DataManager.shared.currentUser()?.cookie)
                 .validate(statusCode: 200..<300)
                 .toDataSignal().observeNext {
-                if let d = (try? unpack($0))?.value as? [String: Any] {
+                    guard let d = (try? unpack($0))?.value as? [String: Any] else {  signal.completed(with: false); return; }
                     Object.load(auxData: d)
-                    if let object = d["object"] as? [String: Any] {
-                        if self.load(dictionary: object) {
-                            let _ = self.auxPush().observeNext {
-                                signal.completed(with: $0)
-                                self.syncState.value = $0 ? SyncState.Synced : SyncState.NotSynced
-                            }
-                        }else{
-                            signal.completed(with: false)
-                        }
+                    guard let object = d["object"] as? [String: Any],
+                    self.load(dictionary: object) else {  signal.completed(with: false); return; }
+                    let _ = self.auxPush().observeNext {
+                        signal.completed(with: $0)
+                        self.syncState.value = $0 ? SyncState.Synced : SyncState.NotSynced
                     }
                     self.calculateRelationships()
                 }
