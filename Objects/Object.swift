@@ -64,9 +64,8 @@ open class Object: Serializable {
                     }
                     self.calculateRelationships()
                 }
+                return NonDisposable.instance
             }
-            return NonDisposable.instance
-        }
     }
 
     public func pull() -> SafeSignal<Bool> {
