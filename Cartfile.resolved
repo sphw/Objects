@@ -1,0 +1,7 @@
+github "Alamofire/Alamofire" "4.4.0"
+github "ReactiveKit/Bond" "6.2.6"
+github "ReactiveKit/ReactiveAlamofire" "v2.0.0"
+github "ReactiveKit/ReactiveKit" "v3.5.5"
+github "matthewpalmer/Locksmith" "3.0.0"
+github "sphw/couchbase-lite-ios" "59cc39b09537bf465415bed2f2ce971d752d15c6"
+github "wokalski/Diff.swift" "0.5.3"
