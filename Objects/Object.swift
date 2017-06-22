@@ -52,7 +52,6 @@ open class Object: Serializable {
             let _ = Alamofire.request(DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())",
                 method: .post, parameters: self.dictionary,
                 encoding: MessagePackEncoding(), headers: DataManager.shared.currentUser()?.cookie)
-                .validate(statusCode: 200..<300)
                 .toDataSignal().observeNext {
                 if let d = (try? unpack($0))?.value as? [String: Any] {
                     Object.load(auxData: d)
@@ -75,7 +74,7 @@ open class Object: Serializable {
 
     public func pull() -> SafeSignal<Bool> {
         let u = DataManager.shared.apiURL +  "\(String(describing: type(of: self)).lowercased())/\(self.id.value)"
-        return Alamofire.request(u, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).validate(statusCode: 200..<300).toDataSignal().map { (data: Data) -> (Bool?) in
+        return Alamofire.request(u, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: DataManager.shared.currentUser()?.cookie).toDataSignal().map { (data: Data) -> (Bool?) in
             guard let d = (try? unpack(data))?.value as? [String: Any] else { return nil }
             Object.load(auxData: d)
             guard let object = d["object"] as? [String: Any] else { return nil }
